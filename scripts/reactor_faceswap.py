@@ -313,11 +313,16 @@ class FaceSwapScript(scripts.Script):
                             source_imgs = self.source_imgs,
                         )
 
+                        logger.status(f"[faceswap.py] len(result)={len(result)}")
+
                         if self.select_source == 2 or (self.select_source == 0 and self.source_imgs is not None and self.source is None):
                             if len(result) > 0 and swapped > 0:
-                                result_images.extend(result)
+                                # result_images.extend(result)
+                                result_images = result
+                                logger.status(f"[faceswap.py] len(result_images)={len(result_images)}")
                                 suffix = "-swapped"
                                 for i,x in enumerate(result):
+                                    logger.status(f"[faceswap.py] saving result[{i}]")
                                     try:
                                         img_path = save_image(result[i], p.outpath_samples, "", p.all_seeds[0], p.all_prompts[0], "png",info=info, p=p, suffix=suffix)
                                     except:
@@ -328,6 +333,7 @@ class FaceSwapScript(scripts.Script):
                         else:
                             if result is not None and swapped > 0:
                                 result_images.append(result)
+                                logger.status(f"[faceswap.py] after append, len(result_images)={len(result_images)}")
                                 suffix = "-swapped"
                                 try:
                                     img_path = save_image(result, p.outpath_samples, "", p.all_seeds[0], p.all_prompts[0], "png",info=info, p=p, suffix=suffix)
@@ -349,7 +355,9 @@ class FaceSwapScript(scripts.Script):
                         save_image(grid, p.outpath_grids, "grid", p.all_seeds[0], p.all_prompts[0], shared.opts.grid_format, info=info, short_filename=not shared.opts.grid_extended_filename, p=p, grid=True)
                     except:
                         logger.error("Cannot save a grid - please, check SD WebUI Settings (Saving and Paths)")
-                
+
+                logger.debug(f"len(processed.images) = {len(processed.images)}")
+
                 processed.images = result_images
                 # processed.infotexts = result_info
     
@@ -569,10 +577,10 @@ class FaceSwapScriptExtras(scripts_postprocessing.ScriptPostprocessing):
                 if self.select_source == 2 or (self.select_source == 0 and self.source_imgs is not None and self.source is None):
                     if len(result) > 0 and swapped > 0:
                         image = result[0]
-                        if len(result) > 1:
-                            grid = make_grid(result)
-                            result.insert(0, grid)
-                            image = grid
+                        # if len(result) > 1:
+                        #     grid = make_grid(result)
+                        #     result.insert(0, grid)
+                        #     image = grid
                         pp.info["ReActor"] = True
                         pp.image = image
                         logger.status("---Done!---")

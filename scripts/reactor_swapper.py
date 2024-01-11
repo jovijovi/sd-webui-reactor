@@ -456,6 +456,8 @@ def swap_face(
                     logger.status("Analyzing Target Image...")
                     target_faces = analyze_faces(target_img)
 
+                last_result_image = target_img
+
                 for i,source_faces in enumerate(source_faces_ff):
 
                     logger.status("(Image %s) Detecting Source Face, Index = %s", i, source_faces_index[0])
@@ -468,13 +470,21 @@ def swap_face(
                         logger.status("Source Faces must have no entries (default=0), one entry, or same number of entries as target faces.")
                     
                     elif source_face is not None:
+                        target_face_index: List[int] = [0]
+                        target_face_index[0] = faces_index[i] if len(faces_index) > 1 else faces_index[0]
+                        logger.status(f"target_face_index={target_face_index}")
 
-                        result_image, output, swapped = operate(source_img_ff[i],target_img,target_img_orig,model,source_faces_index,faces_index,source_faces,target_faces,gender_source,gender_target,source_face,wrong_gender,source_age,source_gender,output,swapped,mask_face,entire_mask_image,enhancement_options)
+                        target_img_orig = cv2.cvtColor(np.array(last_result_image), cv2.COLOR_RGB2BGR)
+                        result_image, output, swapped = operate(source_img_ff[i],last_result_image,target_img_orig,model,source_faces_index,target_face_index,source_faces,target_faces,gender_source,gender_target,source_face,wrong_gender,source_age,source_gender,output,swapped,mask_face,entire_mask_image,enhancement_options)
+                        last_result_image = cv2.cvtColor(np.array(result_image), cv2.COLOR_RGB2BGR)
 
-                        result.append(result_image)
+                        # result.append(result_image)
 
-                    result = [result_image] if len(result) == 0 else result
-            
+                    # result = [result_image] if len(result) == 0 else result
+                    result = [result_image]
+
+            logger.status(f"len(result)={len(result)}, len(output)= {len(output)}, swapped={swapped}")
+
             return result, output, swapped
         
         # END
