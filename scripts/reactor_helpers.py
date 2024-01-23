@@ -11,7 +11,7 @@ from insightface.app.common import Face
 
 from modules.images import FilenameGenerator, get_next_sequence_number
 from modules import shared, script_callbacks
-from scripts.reactor_globals import DEVICE, BASE_PATH, FACE_MODELS_PATH, IS_SDNEXT
+from scripts.reactor_globals import DEVICE, BASE_PATH, FACE_MODELS_PATH, IS_SDNEXT, DET_THRESH
 
 try:
     from modules.paths_internal import models_path
@@ -22,6 +22,27 @@ except:
         model_path = os.path.abspath("models")
 
 MODELS_PATH = None
+
+
+def set_det_thresh(value):
+    global DET_THRESH
+    DET_THRESH = value
+
+
+def get_det_thresh():
+    global DET_THRESH
+    return DET_THRESH
+
+
+def set_det_maxnum(value):
+    global DET_MAXNUM
+    DET_MAXNUM = value
+
+
+def get_det_maxnum():
+    global DET_MAXNUM
+    return DET_MAXNUM
+
 
 def set_Device(value):
     global DEVICE

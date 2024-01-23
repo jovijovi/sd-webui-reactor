@@ -65,7 +65,7 @@ def show(hash_check_block: bool = True):
         gr.Markdown("<br>", visible=hash_check_block)
         with gr.Row(visible=hash_check_block):
             source_hash_check = gr.Checkbox(
-                True,
+                False,
                 label="Source Image Hash Check",
                 info="Recommended to keep it ON. Processing is faster when Source Image is the same."
             )

@@ -12,13 +12,13 @@ from insightface.app.common import Face
 
 from scripts.reactor_globals import FACE_MODELS_PATH
 from scripts.reactor_helpers import (
-    get_image_md5hash, 
-    get_Device, 
-    save_face_model, 
-    load_face_model, 
+    get_image_md5hash,
+    get_Device,
+    save_face_model,
+    load_face_model,
     get_images_from_folder,
     get_images_from_list,
-    set_SDNEXT
+    set_SDNEXT, get_det_thresh, get_det_maxnum
 )
 from scripts.console_log_patch import apply_logging_patch
 
@@ -271,8 +271,11 @@ def half_det_size(det_size):
 def analyze_faces(img_data: np.ndarray, det_size=(640, 640)):
     logger.info("Applied Execution Provider: %s", PROVIDERS[0])
     face_analyser = copy.deepcopy(getAnalysisModel())
-    face_analyser.prepare(ctx_id=0, det_size=det_size)
-    return face_analyser.get(img_data)
+    det_thresh: float = get_det_thresh()
+    det_maxnum: int = get_det_maxnum()
+    logger.status(f"Detection Threshold={det_thresh}, Max Number of Faces={det_maxnum}")
+    face_analyser.prepare(ctx_id=0, det_thresh=det_thresh, det_size=det_size)
+    return face_analyser.get(img=img_data, max_num=det_maxnum)
 
 def get_face_single(img_data: np.ndarray, face, face_index=0, det_size=(640, 640), gender_source=0, gender_target=0):
 

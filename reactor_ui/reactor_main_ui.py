@@ -177,6 +177,27 @@ def show(is_img2img: bool, show_br: bool = True, **msgs):
                 label="Swap in generated image",
                 visible=is_img2img,
             )
+            with gr.Row():
+                det_thresh = gr.Slider(
+                    minimum=0.1,
+                    maximum=1.0,
+                    value=0.5,
+                    step=0.01,
+                    elem_id="reactor_det_thresh",
+                    label="Detection threshold",
+                    info="Higher value = less faces detected; lower value = more faces detected",
+                )
+            with gr.Row():
+                det_maxnum = gr.Slider(
+                    minimum=0,
+                    maximum=20,
+                    value=15,
+                    step=1,
+                    elem_id="reactor_det_maxnum",
+                    label="Detection maxnum",
+                    info="Maximum number of faces (0 is unlimited)",
+                )
+
     select_source.select(on_select_source,[save_original],[control_col_1,control_col_2,control_col_3,save_original,imgs_hash_clear],show_progress=False)
 
-    return img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated
+    return img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum
