@@ -197,7 +197,14 @@ def show(is_img2img: bool, show_br: bool = True, **msgs):
                     label="Detection maxnum",
                     info="Maximum number of faces (0 is unlimited)",
                 )
+            with gr.Row():
+                swap_only_one = gr.Checkbox(
+                    False,
+                    elem_id="reactor_swap_only_one",
+                    label="Swap only one person",
+                    info="If number faces more than 1, return original image directly",
+                )
 
     select_source.select(on_select_source,[save_original],[control_col_1,control_col_2,control_col_3,save_original,imgs_hash_clear],show_progress=False)
 
-    return img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum
+    return img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum, swap_only_one

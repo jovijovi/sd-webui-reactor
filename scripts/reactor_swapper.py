@@ -18,7 +18,7 @@ from scripts.reactor_helpers import (
     load_face_model,
     get_images_from_folder,
     get_images_from_list,
-    set_SDNEXT, get_det_thresh, get_det_maxnum
+    set_SDNEXT, get_det_thresh, get_det_maxnum, get_swap_only_one
 )
 from scripts.console_log_patch import apply_logging_patch
 
@@ -273,8 +273,15 @@ def analyze_faces(img_data: np.ndarray, det_size=(640, 640)):
     face_analyser = copy.deepcopy(getAnalysisModel())
     det_thresh: float = get_det_thresh()
     det_maxnum: int = get_det_maxnum()
-    logger.status(f"Detection Threshold={det_thresh}, Max Number of Faces={det_maxnum}")
+    swap_only_one: bool = get_swap_only_one()
+    logger.status(f"Detection Threshold={det_thresh}, Max Number of Faces={det_maxnum}, Swap Only One={swap_only_one}")
+
     face_analyser.prepare(ctx_id=0, det_thresh=det_thresh, det_size=det_size)
+    faces = face_analyser.get(img=img_data, max_num=det_maxnum)
+    if swap_only_one and len(faces) > 1:
+        logger.status(f"swap_only_one={swap_only_one}, faces={len(faces)}, return []")
+        return []
+
     return face_analyser.get(img=img_data, max_num=det_maxnum)
 
 def get_face_single(img_data: np.ndarray, face, face_index=0, det_size=(640, 640), gender_source=0, gender_target=0):

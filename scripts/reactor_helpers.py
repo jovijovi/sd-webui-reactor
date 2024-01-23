@@ -11,7 +11,7 @@ from insightface.app.common import Face
 
 from modules.images import FilenameGenerator, get_next_sequence_number
 from modules import shared, script_callbacks
-from scripts.reactor_globals import DEVICE, BASE_PATH, FACE_MODELS_PATH, IS_SDNEXT, DET_THRESH
+from scripts.reactor_globals import DEVICE, BASE_PATH, FACE_MODELS_PATH, IS_SDNEXT, DET_THRESH, DET_MAXNUM
 
 try:
     from modules.paths_internal import models_path
@@ -22,6 +22,16 @@ except:
         model_path = os.path.abspath("models")
 
 MODELS_PATH = None
+
+
+def set_swap_only_one(value):
+    global SWAP_ONLY_ONE
+    SWAP_ONLY_ONE = value
+
+
+def get_swap_only_one():
+    global SWAP_ONLY_ONE
+    return SWAP_ONLY_ONE
 
 
 def set_det_thresh(value):

@@ -28,7 +28,7 @@ from scripts.console_log_patch import apply_logging_patch
 from scripts.reactor_helpers import (
     make_grid,
     set_Device,
-    get_SDNEXT, set_det_thresh, set_det_maxnum
+    get_SDNEXT, set_det_thresh, set_det_maxnum, set_swap_only_one
 )
 from scripts.reactor_globals import SWAPPER_MODELS_PATH #, DEVICE, DEVICE_LIST
 
@@ -63,7 +63,7 @@ class FaceSwapScript(scripts.Script):
             msgs: dict = {
                 "extra_multiple_source": "",
             }
-            img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum = ui_main.show(is_img2img=is_img2img, **msgs)
+            img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum, swap_only_one = ui_main.show(is_img2img=is_img2img, **msgs)
 
             # TAB UPSCALE
             restore_first, upscaler_name, upscaler_scale, upscaler_visibility = ui_upscale.show()
@@ -105,6 +105,7 @@ class FaceSwapScript(scripts.Script):
             imgs,
             det_thresh,
             det_maxnum,
+            swap_only_one,
         ]
 
 
@@ -165,6 +166,7 @@ class FaceSwapScript(scripts.Script):
         imgs,
         det_thresh,
         det_maxnum,
+        swap_only_one,
     ):
         self.enable = enable
         if self.enable:
@@ -201,6 +203,7 @@ class FaceSwapScript(scripts.Script):
             self.source_imgs = imgs
             self.det_thresh = det_thresh
             self.det_maxnum = det_maxnum
+            self.swap_only_one = swap_only_one
             if self.gender_source is None or self.gender_source == "No":
                 self.gender_source = 0
             if self.gender_target is None or self.gender_target == "No":
@@ -228,7 +231,8 @@ class FaceSwapScript(scripts.Script):
             set_Device(self.device)
             set_det_thresh(self.det_thresh)
             set_det_maxnum(self.det_maxnum)
-            
+            set_swap_only_one(self.swap_only_one)
+
             if ((self.source is not None or self.source_imgs is not None) and self.select_source == 0) or ((self.face_model is not None and self.face_model != "None") and self.select_source == 1) or ((self.source_folder is not None and self.source_folder != "") and self.select_source == 2):
                 logger.debug("*** Log patch")
                 apply_logging_patch(console_logging_level)
@@ -441,7 +445,7 @@ class FaceSwapScriptExtras(scripts_postprocessing.ScriptPostprocessing):
             msgs: dict = {
                 "extra_multiple_source": " | Сomparison grid as a result",
             }
-            img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum = ui_main.show(is_img2img=False, show_br=False, **msgs)
+            img, imgs, select_source, face_model, source_folder, save_original, mask_face, source_faces_index, gender_source, faces_index, gender_target, face_restorer_name, face_restorer_visibility, codeformer_weight, swap_in_source, swap_in_generated, det_thresh, det_maxnum, swap_only_one = ui_main.show(is_img2img=False, show_br=False, **msgs)
             
             # TAB UPSCALE
             restore_first, upscaler_name, upscaler_scale, upscaler_visibility = ui_upscale.show(show_br=False)
@@ -478,6 +482,7 @@ class FaceSwapScriptExtras(scripts_postprocessing.ScriptPostprocessing):
             'imgs': imgs,
             'det_thresh': det_thresh,
             'det_maxnum': det_maxnum,
+            'swap_only_one': swap_only_one,
         }
         return args
 
@@ -534,6 +539,7 @@ class FaceSwapScriptExtras(scripts_postprocessing.ScriptPostprocessing):
             self.source_imgs = args['imgs']
             self.det_thresh = args['det_thresh']
             self.det_maxnum = args['det_maxnum']
+            self.swap_only_one = args['swap_only_one']
             if self.gender_source is None or self.gender_source == "No":
                 self.gender_source = 0
             if self.gender_target is None or self.gender_target == "No":
@@ -559,6 +565,7 @@ class FaceSwapScriptExtras(scripts_postprocessing.ScriptPostprocessing):
             set_Device(self.device)
             set_det_thresh(self.det_thresh)
             set_det_maxnum(self.det_maxnum)
+            set_swap_only_one(self.swap_only_one)
 
             logger.debug("We're here: process() 1")
             
